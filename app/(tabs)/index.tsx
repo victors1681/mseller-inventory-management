@@ -5,10 +5,12 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "react-native-paper";
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const { user } = useAuth();
 
   return (
     <ParallaxScrollView
@@ -24,7 +26,9 @@ export default function HomeScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome! Santos A</ThemedText>
+        <ThemedText type="title">
+          Welcome{user?.displayName ? `, ${user.displayName}` : ""}!
+        </ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>

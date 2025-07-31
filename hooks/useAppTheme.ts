@@ -1,5 +1,5 @@
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { getTheme, CustomTheme } from '@/constants/Theme';
+import { CustomTheme, getTheme } from "@/constants/Theme";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 /**
  * Custom hook that returns the appropriate theme based on the color scheme
@@ -7,7 +7,7 @@ import { getTheme, CustomTheme } from '@/constants/Theme';
  */
 export const useAppTheme = (): CustomTheme => {
   const colorScheme = useColorScheme();
-  return getTheme(colorScheme === 'dark');
+  return getTheme(colorScheme === "dark");
 };
 
 /**
@@ -15,5 +15,5 @@ export const useAppTheme = (): CustomTheme => {
  */
 export const useIsDarkMode = (): boolean => {
   const colorScheme = useColorScheme();
-  return colorScheme === 'dark';
+  return colorScheme === "dark";
 };

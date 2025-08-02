@@ -57,6 +57,15 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="api-test"
+          options={{
+            title: "API Test",
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="network" color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </PaperProvider>
   );

@@ -13,6 +13,7 @@ import AuthScreen from "@/components/auth/AuthScreen";
 import LoadingScreen from "@/components/auth/LoadingScreen";
 import { getTheme } from "@/constants/Theme";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { UserProvider } from "@/contexts/UserContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 function RootLayoutContent() {
@@ -54,7 +55,9 @@ export default function RootLayout() {
   return (
     <PaperProvider theme={theme}>
       <AuthProvider>
-        <RootLayoutContent />
+        <UserProvider>
+          <RootLayoutContent />
+        </UserProvider>
       </AuthProvider>
     </PaperProvider>
   );

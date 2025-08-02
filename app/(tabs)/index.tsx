@@ -1,16 +1,16 @@
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUser } from "@/contexts/UserContext";
 import { useTheme } from "react-native-paper";
 
 export default function HomeScreen() {
   const theme = useTheme();
-  const { user } = useAuth();
+  const { user, userProfile, loading } = useUser();
 
   return (
     <ParallaxScrollView
@@ -27,24 +27,41 @@ export default function HomeScreen() {
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">
-          Welcome{user?.displayName ? `, ${user.displayName}` : ""}!
+          Welcome
+          {userProfile?.firstName
+            ? `, ${userProfile.firstName}`
+            : user?.displayName
+            ? `, ${user.displayName}`
+            : ""}
+          !
         </ThemedText>
         <HelloWave />
       </ThemedView>
+
+      {userProfile && (
+        <ThemedView style={styles.stepContainer}>
+          <ThemedText type="subtitle">Business Information</ThemedText>
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">Company:</ThemedText>{" "}
+            {userProfile.business.name}
+          </ThemedText>
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">Role:</ThemedText>{" "}
+            {userProfile.type}
+          </ThemedText>
+          <ThemedText>
+            <ThemedText type="defaultSemiBold">Mode:</ThemedText>{" "}
+            {userProfile.testMode ? "Test" : "Production"}
+          </ThemedText>
+        </ThemedView>
+      )}
+
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it ssss</ThemedText>
+        <ThemedText type="subtitle">Getting Started</ThemedText>
         <ThemedText>
-          Testing Edit cool{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          to see changes. Press{" "}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: "cmd + d",
-              android: "cmd + m",
-              web: "F12",
-            })}
-          </ThemedText>{" "}
-          to open developer tools.
+          Your inventory management system is ready to use.{" "}
+          <ThemedText type="defaultSemiBold">Navigate</ThemedText> to different
+          tabs to explore features.
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>

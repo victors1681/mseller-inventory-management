@@ -13,10 +13,10 @@ import {
 } from "react-native-paper";
 import { auth } from "../../config/firebase";
 import { CustomTheme } from "../../constants/Theme";
-import { useAuth } from "../../contexts/AuthContext";
+import { useUser } from "../../contexts/UserContext";
 
 const ProfileScreen: React.FC = () => {
-  const { user } = useAuth();
+  const { user, userProfile } = useUser();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -87,6 +87,103 @@ const ProfileScreen: React.FC = () => {
             </Paragraph>
 
             <Divider style={styles.divider} />
+
+            {userProfile && (
+              <>
+                <View style={styles.infoSection}>
+                  <Title
+                    style={[
+                      styles.sectionTitle,
+                      { color: theme.colors.primary },
+                    ]}
+                  >
+                    Business Information
+                  </Title>
+
+                  <View style={styles.infoRow}>
+                    <Paragraph
+                      style={[
+                        styles.infoLabel,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      Company:
+                    </Paragraph>
+                    <Paragraph
+                      style={[
+                        styles.infoValue,
+                        { color: theme.colors.onSurface },
+                      ]}
+                    >
+                      {userProfile.business.name}
+                    </Paragraph>
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Paragraph
+                      style={[
+                        styles.infoLabel,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      Role:
+                    </Paragraph>
+                    <Paragraph
+                      style={[
+                        styles.infoValue,
+                        { color: theme.colors.onSurface },
+                      ]}
+                    >
+                      {userProfile.type}
+                    </Paragraph>
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Paragraph
+                      style={[
+                        styles.infoLabel,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      Seller Code:
+                    </Paragraph>
+                    <Paragraph
+                      style={[
+                        styles.infoValue,
+                        { color: theme.colors.onSurface },
+                      ]}
+                    >
+                      {userProfile.sellerCode}
+                    </Paragraph>
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Paragraph
+                      style={[
+                        styles.infoLabel,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      Mode:
+                    </Paragraph>
+                    <Paragraph
+                      style={[
+                        styles.infoValue,
+                        {
+                          color: userProfile.testMode
+                            ? theme.colors.secondary
+                            : theme.colors.primary,
+                        },
+                      ]}
+                    >
+                      {userProfile.testMode ? "Test Mode" : "Production"}
+                    </Paragraph>
+                  </View>
+                </View>
+
+                <Divider style={styles.divider} />
+              </>
+            )}
 
             <View style={styles.infoSection}>
               <View style={styles.infoRow}>
@@ -223,6 +320,12 @@ const styles = StyleSheet.create({
   infoSection: {
     width: "100%",
     marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 16,
+    textAlign: "center",
   },
   infoRow: {
     flexDirection: "row",

@@ -9,6 +9,9 @@ import { StatusBar } from "expo-status-bar";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
+// Initialize i18n
+import "@/config/i18n";
+
 import AuthScreen from "@/components/auth/AuthScreen";
 import LoadingScreen from "@/components/auth/LoadingScreen";
 import { getTheme } from "@/constants/Theme";

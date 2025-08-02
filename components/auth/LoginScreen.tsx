@@ -18,6 +18,7 @@ import {
 } from "react-native-paper";
 import { auth } from "../../config/firebase";
 import { CustomTheme } from "../../constants/Theme";
+import { useTranslation } from "../../hooks/useTranslation";
 
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
@@ -34,10 +35,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme() as CustomTheme;
+  const { t } = useTranslation();
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password");
+      setError(t("auth.invalidCredentials"));
       return;
     }
 
@@ -57,17 +59,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   const getErrorMessage = (errorCode: string): string => {
     switch (errorCode) {
       case "auth/invalid-email":
-        return "Invalid email address";
+        return t("auth.invalidCredentials");
       case "auth/user-disabled":
-        return "This account has been disabled";
+        return t("errors.authorizationError");
       case "auth/user-not-found":
-        return "No account found with this email";
+        return t("auth.invalidCredentials");
       case "auth/wrong-password":
-        return "Incorrect password";
+        return t("auth.invalidCredentials");
       case "auth/too-many-requests":
-        return "Too many failed attempts. Please try again later";
+        return t("errors.timeoutError");
       default:
-        return "An error occurred. Please try again";
+        return t("errors.authenticationError");
     }
   };
 
@@ -83,16 +85,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
           >
             <Card.Content>
               <Title style={[styles.title, { color: theme.colors.primary }]}>
-                Welcome Back
+                {t("messages.welcome")}
               </Title>
               <Paragraph
                 style={[styles.subtitle, { color: theme.colors.onSurface }]}
               >
-                Sign in to your account
+                {t("auth.signIn")}
               </Paragraph>
 
               <TextInput
-                label="Email"
+                label={t("common.email")}
                 value={email}
                 onChangeText={setEmail}
                 mode="outlined"
@@ -104,7 +106,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
               />
 
               <TextInput
-                label="Password"
+                label={t("common.password")}
                 value={password}
                 onChangeText={setPassword}
                 mode="outlined"
@@ -129,7 +131,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                 style={styles.button}
                 contentStyle={styles.buttonContent}
               >
-                Sign In
+                {t("auth.signIn")}
               </Button>
 
               {onNavigateToPasswordReset && (
@@ -139,7 +141,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                   disabled={loading}
                   style={styles.textButton}
                 >
-                  Forgot Password?
+                  {t("auth.forgotPassword")}
                 </Button>
               )}
 
@@ -150,7 +152,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
                   disabled={loading}
                   style={styles.textButton}
                 >
-                  Don&apos;t have an account? Sign Up
+                  {t("auth.dontHaveAccount")}
                 </Button>
               )}
             </Card.Content>
@@ -163,7 +165,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
         onDismiss={() => setError("")}
         duration={4000}
         action={{
-          label: "Dismiss",
+          label: t("common.cancel"),
           onPress: () => setError(""),
         }}
       >

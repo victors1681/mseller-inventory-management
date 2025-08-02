@@ -1,0 +1,36 @@
+name: MSeller React Native Template
+description: A comprehensive React Native Expo template with Firebase Authentication, internationalization, and API integration
+
+# Template configuration
+template:
+  # Include all files by default
+  include:
+    - "**/*"
+
+  # Exclude certain files from the template
+  exclude:
+    - ".env"
+    - "node_modules/**"
+    - ".expo/**"
+    - "dist/**"
+    - "build/**"
+    - ".git/**"
+    - "*.log"
+
+# Suggested labels for issues
+labels:
+  - name: "template-setup"
+    color: "0366d6"
+    description: "Issues related to template setup and configuration"
+  - name: "firebase"
+    color: "FFA500"
+    description: "Firebase integration issues"
+  - name: "i18n"
+    color: "008000"
+    description: "Internationalization and translations"
+  - name: "authentication"
+    color: "FF0000"
+    description: "Authentication and user management"
+  - name: "ui/ux"
+    color: "800080"
+    description: "User interface and experience"

@@ -30,10 +30,10 @@ const ProfileScreen: React.FC = () => {
 
     try {
       await signOut(auth);
-      setSuccess(t('auth.signOut'));
+      setSuccess(t("auth.signOut"));
     } catch (error: any) {
       console.error("Sign out error:", error);
-      setError(t('errors.genericError'));
+      setError(t("errors.genericError"));
     } finally {
       setLoading(false);
     }

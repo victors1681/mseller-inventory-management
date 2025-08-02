@@ -5,6 +5,7 @@ This is a React Native Expo template with Firebase Authentication, international
 ## Features
 
 ### 🔐 Authentication System
+
 - Firebase Authentication with email/password
 - User context management with loading states
 - Protected routes and screens
@@ -12,6 +13,7 @@ This is a React Native Expo template with Firebase Authentication, international
 - User profile management
 
 ### 🌍 Internationalization (i18n)
+
 - Multi-language support (English/Spanish)
 - React-i18next integration
 - Language selector component
@@ -19,12 +21,14 @@ This is a React Native Expo template with Firebase Authentication, international
 - Type-safe translation keys
 
 ### 🎨 UI/UX
+
 - Material Design 3 with react-native-paper
 - Custom theming with light/dark mode support
 - Responsive design patterns
 - Loading states and error handling
 
 ### 🔗 API Integration
+
 - Axios HTTP client with automatic token management
 - Firebase Functions integration
 - Request/response interceptors
@@ -32,6 +36,7 @@ This is a React Native Expo template with Firebase Authentication, international
 - Environment-based URL configuration
 
 ### 📱 Project Structure
+
 - Clean architecture with contexts, services, and components
 - TypeScript throughout
 - ESLint configuration
@@ -74,16 +79,19 @@ npm start
 ### 4. Customize for Your Project
 
 1. **Update project name and identifiers:**
+
    - `package.json` - name, description
    - `app.json` - name, slug, package names
    - `README.md` - project description
 
 2. **Update translation files:**
+
    - `locales/en.json` - English translations
    - `locales/es.json` - Spanish translations
    - Add more languages as needed
 
 3. **Customize themes:**
+
    - `constants/Theme.ts` - colors and styling
    - `constants/Colors.ts` - color definitions
 
@@ -202,6 +210,7 @@ MIT License - see LICENSE file for details
 ## Support
 
 For questions and support:
+
 - Create an issue in the repository
 - Check the documentation in the `/docs` folder
 - Review the API integration guide

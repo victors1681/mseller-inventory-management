@@ -14,6 +14,7 @@ import {
 import { auth } from "../../config/firebase";
 import { CustomTheme } from "../../constants/Theme";
 import { useUser } from "../../contexts/UserContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const ProfileScreen: React.FC = () => {
   const { user, userProfile } = useUser();
@@ -21,6 +22,7 @@ const ProfileScreen: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const theme = useTheme() as CustomTheme;
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     setLoading(true);
@@ -28,10 +30,10 @@ const ProfileScreen: React.FC = () => {
 
     try {
       await signOut(auth);
-      setSuccess("Signed out successfully");
+      setSuccess(t('auth.signOut'));
     } catch (error: any) {
       console.error("Sign out error:", error);
-      setError("Failed to sign out. Please try again.");
+      setError(t('errors.genericError'));
     } finally {
       setLoading(false);
     }

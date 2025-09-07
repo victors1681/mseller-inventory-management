@@ -3,16 +3,28 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import {
+  getEnvironmentConfig,
+  logEnvironmentConfig,
+} from "../config/environment";
 import { auth } from "../config/firebase";
 import { IConfig } from "../types/user";
 
-// Create axios instance
+// Get environment configuration
+const envConfig = getEnvironmentConfig();
+
+// Create axios instance with environment-based configuration
 export const restClient: AxiosInstance = axios.create({
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
+  // Set base URL if running in local development mode
+  ...(envConfig.isLocalDevelopment && { baseURL: envConfig.apiBaseURL }),
 });
+
+// Log the configuration on startup
+logEnvironmentConfig();
 
 // Request interceptor to add auth token
 restClient.interceptors.request.use(
@@ -67,6 +79,12 @@ restClient.interceptors.response.use(
 
 // Set client URL based on user configuration
 export const axiosSetClientUrl = (config?: IConfig, userTestMode?: boolean) => {
+  // Skip URL configuration if we're in local development mode
+  if (envConfig.isLocalDevelopment) {
+    console.log("🔧 Skipping URL configuration - using local development mode");
+    return;
+  }
+
   if (config?.serverUrl) {
     if (config.testMode || userTestMode) {
       restClient.defaults.headers.common[

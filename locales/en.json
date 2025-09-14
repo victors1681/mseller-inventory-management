@@ -152,8 +152,8 @@
         "noProductsFoundMessage": "We couldn't find any products matching your search. Try a different search term or verify the information."
     },
     "messages": {
-        "welcome": "Welcome to MSeller",
-        "goodbye": "Thank you for using MSeller",
+        "welcome": "Welcome to MSeller Lite",
+        "goodbye": "Thank you for using MSeller Lite",
         "dataSaved": "Data saved successfully",
         "dataLoaded": "Data loaded successfully",
         "noDataFound": "No data found",
@@ -171,7 +171,7 @@
         "systemStatus": "System Status",
         "businessInfo": "Business Information",
         "getStarted": "Getting Started",
-        "exploreFeatures": "Explore the powerful features of MSeller to manage your inventory efficiently.",
+        "exploreFeatures": "Explore the powerful features of MSeller Lite to manage your inventory efficiently.",
         "productManagement": "Product Management",
         "productManagementDesc": "Search, view, and manage your product catalog with ease.",
         "inventoryTracking": "Inventory Tracking",

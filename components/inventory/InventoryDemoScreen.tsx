@@ -157,7 +157,7 @@ const InventoryDemoScreen: React.FC<InventoryDemoScreenProps> = ({
               </Paragraph>
               <Paragraph style={styles.featureDescription}>
                 Servicio completo para integración con Consumo.Api del sistema
-                MSeller
+                MSeller Lite
               </Paragraph>
             </View>
           </Card.Content>

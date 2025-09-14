@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -22,6 +22,7 @@ import {
 } from "react-native-paper";
 import { CustomTheme } from "../../constants/Theme";
 import { useUser } from "../../contexts/UserContext";
+import { useBarcodeScanner } from "../../hooks/useBarcodeScanner";
 import { useTranslation } from "../../hooks/useTranslation";
 import {
   inventoryService,
@@ -64,6 +65,11 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
   const [products, setProducts] = useState<ProductoConteo[]>([]);
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
 
+  // Ref for searchbar to programmatically focus
+  const searchRef = useRef<any>(null);
+
+  // Ref for auto-search timeout
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warehouseId = userProfile?.warehouse
     ? inventoryService.getWarehouseId(userProfile.warehouse)
     : null;
@@ -72,6 +78,80 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
     id: string;
     tipo: string;
   } | null>(null);
+
+  // Barcode scanner hook
+  const handleBarcodeScanned = useCallback(
+    async (scannedData: string) => {
+      if (!warehouseId) {
+        console.log("Search cancelled: missing warehouse ID");
+        return;
+      }
+
+      console.log("Barcode scanned:", scannedData);
+
+      // Set search mode to barcode and update query
+      setSearchMode("barcode");
+      setSearchQuery(scannedData);
+
+      // Focus the search input if available
+      if (searchRef.current) {
+        searchRef.current.focus();
+      }
+
+      // Trigger search automatically with the scanned data
+      console.log("Triggering automatic search for:", scannedData);
+      setLoading(true);
+      setError("");
+      setFoundProduct(null);
+
+      try {
+        // Validate barcode first
+        const validation = await inventoryService.validarCodigoBarra(
+          scannedData,
+          warehouseId
+        );
+
+        if (!validation.esValido) {
+          setError(t("inventory.invalidBarcode"));
+          return;
+        }
+
+        // Search product by barcode
+        const productData = await inventoryService.buscarPorCodigoBarra(
+          scannedData,
+          warehouseId
+        );
+
+        if (productData.encontrado) {
+          setFoundProduct(productData);
+          console.log("Product found via scanner:", productData);
+        } else {
+          setError(t("inventory.barcodeNotFound"));
+          console.log("Product not found for scanned barcode:", scannedData);
+        }
+      } catch (err: any) {
+        console.error("Error searching scanned product:", err);
+        setError(err.message || t("errors.networkError"));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      warehouseId,
+      t,
+      setSearchMode,
+      setSearchQuery,
+      setLoading,
+      setError,
+      setFoundProduct,
+    ]
+  );
+
+  const { isReady: scannerReady, isScanning } = useBarcodeScanner({
+    onScan: handleBarcodeScanned,
+    enabled: searchMode === "barcode",
+    minLength: 3,
+  });
 
   useEffect(() => {
     const initDeviceInfo = async () => {
@@ -94,13 +174,18 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
     }
   }, [conteo.id, t]);
 
-  useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+  const handleSearch = useCallback(async () => {
+    if (!searchQuery.trim() || !warehouseId) {
+      console.log("Search cancelled: missing query or warehouse ID");
+      return;
+    }
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim() || !warehouseId) return;
-
+    console.log(
+      "Starting search for:",
+      searchQuery.trim(),
+      "Mode:",
+      searchMode
+    );
     setLoading(true);
     setError("");
     setFoundProduct(null);
@@ -126,8 +211,10 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
 
         if (productData.encontrado) {
           setFoundProduct(productData);
+          console.log("Product found:", productData);
         } else {
           setError(t("inventory.barcodeNotFound"));
+          console.log("Product not found for barcode:", searchQuery);
         }
       } else {
         // Manual search by product code
@@ -140,8 +227,10 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
 
         if (product) {
           setFoundProduct(product);
+          console.log("Product found:", product);
         } else {
           setError(t("inventory.productNotFound"));
+          console.log("Product not found for query:", searchQuery);
         }
       }
     } catch (err: any) {
@@ -150,7 +239,20 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, warehouseId, searchMode, products, t]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
+
+  // Cleanup search timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSaveCount = async () => {
     if (!foundProduct || !countedQuantity.trim() || !deviceInfo) {
@@ -314,13 +416,43 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
         {/* Search Mode Toggle */}
         <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Title style={styles.sectionTitle}>
-              {t("inventory.searchProduct")}
-            </Title>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Title style={styles.sectionTitle}>
+                {t("inventory.searchProduct")}
+              </Title>
+              {scannerReady && searchMode === "barcode" && (
+                <Chip
+                  icon={isScanning ? "loading" : "barcode-scan"}
+                  style={{
+                    backgroundColor: isScanning
+                      ? theme.colors.secondary
+                      : theme.colors.primaryContainer,
+                  }}
+                  textStyle={{ fontSize: 12 }}
+                >
+                  {isScanning ? "Scanning..." : "Scanner Ready"}
+                </Chip>
+              )}
+            </View>
             <View style={styles.searchModeToggle}>
               <Button
                 mode={searchMode === "barcode" ? "contained" : "outlined"}
-                onPress={() => setSearchMode("barcode")}
+                onPress={() => {
+                  setSearchMode("barcode");
+                  // Auto-focus when switching to barcode mode
+                  setTimeout(() => {
+                    if (searchRef.current) {
+                      searchRef.current.focus();
+                    }
+                  }, 100);
+                }}
                 style={styles.toggleButton}
                 icon="barcode-scan"
               >
@@ -337,12 +469,34 @@ const ProductCountingScreen: React.FC<ProductCountingScreenProps> = ({
             </View>
 
             <Searchbar
+              ref={searchRef}
               placeholder={
                 searchMode === "barcode"
                   ? "Escanear o ingresar código de barras"
                   : "Buscar por código o nombre de producto"
               }
-              onChangeText={setSearchQuery}
+              onChangeText={(text) => {
+                setSearchQuery(text);
+
+                // Auto-search for barcode mode when user stops typing
+                if (searchMode === "barcode" && text.trim().length >= 8) {
+                  // Clear existing timeout
+                  if (searchTimeoutRef.current) {
+                    clearTimeout(searchTimeoutRef.current);
+                  }
+
+                  // Set new timeout to trigger search after user stops typing
+                  searchTimeoutRef.current = setTimeout(() => {
+                    if (text.trim().length >= 8) {
+                      console.log(
+                        "Auto-triggering search for manually entered barcode:",
+                        text.trim()
+                      );
+                      handleSearch();
+                    }
+                  }, 1000); // Wait 1 second after user stops typing
+                }
+              }}
               value={searchQuery}
               onSubmitEditing={handleSearch}
               icon={searchMode === "barcode" ? "barcode-scan" : "magnify"}

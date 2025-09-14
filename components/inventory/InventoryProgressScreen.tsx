@@ -5,10 +5,9 @@ import {
   Chip,
   Divider,
   IconButton,
-  Paragraph,
   ProgressBar,
   Snackbar,
-  Title,
+  Text,
   useTheme,
 } from "react-native-paper";
 import { CustomTheme } from "../../constants/Theme";
@@ -102,21 +101,23 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
 
   const getFilteredProducts = () => {
     if (filterStatus === "all") return products;
-    return products.filter((p) => p.estado === filterStatus);
+    return products.filter((p) => (p as any).estado === filterStatus);
   };
 
   const filteredProducts = getFilteredProducts();
 
   const statusCounts = {
-    pending: products.filter((p) => p.estado === EstadoConteoDetalle.Pendiente)
-      .length,
-    counted: products.filter((p) => p.estado === EstadoConteoDetalle.Contado)
-      .length,
+    pending: products.filter(
+      (p) => (p as any).estado === EstadoConteoDetalle.Pendiente
+    ).length,
+    counted: products.filter(
+      (p) => (p as any).estado === EstadoConteoDetalle.Contado
+    ).length,
     verified: products.filter(
-      (p) => p.estado === EstadoConteoDetalle.Verificado
+      (p) => (p as any).estado === EstadoConteoDetalle.Verificado
     ).length,
     discrepancy: products.filter(
-      (p) => p.estado === EstadoConteoDetalle.Discrepancia
+      (p) => (p as any).estado === EstadoConteoDetalle.Discrepancia
     ).length,
   };
 
@@ -126,9 +127,12 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
     >
       <View style={styles.header}>
         <IconButton icon="arrow-left" size={24} onPress={onNavigateBack} />
-        <Title style={{ color: theme.colors.primary, flex: 1 }}>
+        <Text
+          variant="titleLarge"
+          style={{ color: theme.colors.primary, flex: 1 }}
+        >
           {t("inventory.countProgress")}
-        </Title>
+        </Text>
         <IconButton
           icon="refresh"
           size={24}
@@ -149,60 +153,67 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
             style={[styles.card, { backgroundColor: theme.colors.surface }]}
           >
             <Card.Content>
-              <Title style={{ color: theme.colors.primary, marginBottom: 16 }}>
+              <Text
+                variant="titleLarge"
+                style={{ color: theme.colors.primary, marginBottom: 16 }}
+              >
                 Resumen General
-              </Title>
+              </Text>
 
               <View style={styles.summaryGrid}>
                 <View style={styles.summaryItem}>
-                  <Paragraph style={styles.summaryNumber}>
-                    {summary.totalProductos}
-                  </Paragraph>
-                  <Paragraph style={styles.summaryLabel}>
+                  <Text variant="headlineMedium" style={styles.summaryNumber}>
+                    {summary.totalProductosContados +
+                      summary.productosPendientes}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.summaryLabel}>
                     {t("inventory.totalProducts")}
-                  </Paragraph>
+                  </Text>
                 </View>
 
                 <View style={styles.summaryItem}>
-                  <Paragraph
+                  <Text
+                    variant="headlineMedium"
                     style={[
                       styles.summaryNumber,
                       { color: theme.colors.primary },
                     ]}
                   >
-                    {summary.productosContados}
-                  </Paragraph>
-                  <Paragraph style={styles.summaryLabel}>
+                    {summary.totalProductosContados}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.summaryLabel}>
                     {t("inventory.completedProducts")}
-                  </Paragraph>
+                  </Text>
                 </View>
 
                 <View style={styles.summaryItem}>
-                  <Paragraph
+                  <Text
+                    variant="headlineMedium"
                     style={[
                       styles.summaryNumber,
                       { color: theme.colors.outline },
                     ]}
                   >
                     {summary.productosPendientes}
-                  </Paragraph>
-                  <Paragraph style={styles.summaryLabel}>
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.summaryLabel}>
                     {t("inventory.pendingProducts")}
-                  </Paragraph>
+                  </Text>
                 </View>
 
                 <View style={styles.summaryItem}>
-                  <Paragraph
+                  <Text
+                    variant="headlineMedium"
                     style={[
                       styles.summaryNumber,
                       { color: theme.colors.error },
                     ]}
                   >
                     {summary.discrepanciasEncontradas}
-                  </Paragraph>
-                  <Paragraph style={styles.summaryLabel}>
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.summaryLabel}>
                     {t("inventory.discrepancy")}
-                  </Paragraph>
+                  </Text>
                 </View>
               </View>
 
@@ -210,14 +221,18 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
 
               <View style={styles.progressSection}>
                 <View style={styles.progressHeader}>
-                  <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                  >
                     Progreso Total
-                  </Paragraph>
-                  <Paragraph
+                  </Text>
+                  <Text
+                    variant="bodyMedium"
                     style={{ color: theme.colors.primary, fontWeight: "bold" }}
                   >
-                    {summary.porcentajeCompletado.toFixed(1)}%
-                  </Paragraph>
+                    {summary.porcentajeCompletado?.toFixed(1)}%
+                  </Text>
                 </View>
                 <ProgressBar
                   progress={summary.porcentajeCompletado / 100}
@@ -226,16 +241,17 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
                 />
               </View>
 
-              {summary.valorTotalDiscrepancias !== 0 && (
+              {/* {summary.valorTotalDiscrepancias !== 0 && (
                 <View style={styles.discrepancyAlert}>
-                  <Paragraph
+                  <Text
+                    variant="bodyMedium"
                     style={{ color: theme.colors.error, fontWeight: "bold" }}
                   >
                     Valor Total de Discrepancias: $
-                    {summary.valorTotalDiscrepancias.toFixed(2)}
-                  </Paragraph>
+                    {summary.valorTotalDiscrepancias?.toFixed(2)}
+                  </Text>
                 </View>
-              )}
+              )} */}
             </Card.Content>
           </Card>
         )}
@@ -243,7 +259,9 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
         {/* Status Filter */}
         <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Title style={styles.sectionTitle}>Filtrar por Estado</Title>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
+              Filtrar por Estado
+            </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.filterChips}>
                 <Chip
@@ -284,69 +302,75 @@ const InventoryProgressScreen: React.FC<InventoryProgressScreenProps> = ({
         {/* Products List */}
         <Card style={[styles.card, { backgroundColor: theme.colors.surface }]}>
           <Card.Content>
-            <Title style={styles.sectionTitle}>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
               Productos ({filteredProducts.length})
-            </Title>
+            </Text>
 
             {filteredProducts.map((product, index) => (
-              <View key={product.codigoProducto} style={styles.productItem}>
+              <View key={product.codigo} style={styles.productItem}>
                 <View style={styles.productInfo}>
-                  <Paragraph style={styles.productCode}>
-                    {product.codigoProducto}
-                  </Paragraph>
-                  <Paragraph style={styles.productName}>
-                    {product.nombreProducto}
-                  </Paragraph>
+                  <Text variant="bodyMedium" style={styles.productCode}>
+                    {product.codigo}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.productName}>
+                    {product.nombre}
+                  </Text>
 
                   {product.ubicacionDetallada && (
-                    <Paragraph style={styles.location}>
+                    <Text variant="bodySmall" style={styles.location}>
                       📍 {inventoryService.formatProductLocation(product)}
-                    </Paragraph>
+                    </Text>
                   )}
 
                   <View style={styles.quantityInfo}>
-                    {product.cantidadSnapshot !== undefined && (
-                      <Paragraph style={styles.quantityText}>
-                        Esperado: {product.cantidadSnapshot}
-                      </Paragraph>
+                    {(product as any).cantidadSnapshot !== undefined && (
+                      <Text variant="bodySmall" style={styles.quantityText}>
+                        Esperado: {(product as any).cantidadSnapshot}
+                      </Text>
                     )}
-                    {product.cantidadContada !== undefined && (
-                      <Paragraph style={styles.quantityText}>
-                        Contado: {product.cantidadContada}
-                      </Paragraph>
+                    {(product as any).cantidadContada !== undefined && (
+                      <Text variant="bodySmall" style={styles.quantityText}>
+                        Contado: {(product as any).cantidadContada}
+                      </Text>
                     )}
-                    {product.cantidadSnapshot !== undefined &&
-                      product.cantidadContada !== undefined &&
-                      product.cantidadSnapshot !== product.cantidadContada && (
-                        <Paragraph
+                    {(product as any).cantidadSnapshot !== undefined &&
+                      (product as any).cantidadContada !== undefined &&
+                      (product as any).cantidadSnapshot !==
+                        (product as any).cantidadContada && (
+                        <Text
+                          variant="bodySmall"
                           style={[
                             styles.quantityText,
                             { color: theme.colors.error, fontWeight: "bold" },
                           ]}
                         >
                           Diferencia:{" "}
-                          {product.cantidadContada - product.cantidadSnapshot}
-                        </Paragraph>
+                          {(product as any).cantidadContada -
+                            (product as any).cantidadSnapshot}
+                        </Text>
                       )}
                   </View>
                 </View>
 
                 <Chip
                   style={{
-                    backgroundColor: getStatusColor(product.estado),
+                    backgroundColor: getStatusColor((product as any).estado),
                   }}
                   textStyle={{ color: theme.colors.onPrimary }}
                 >
-                  {getStatusText(product.estado)}
+                  {getStatusText((product as any).estado)}
                 </Chip>
               </View>
             ))}
 
             {filteredProducts.length === 0 && (
               <View style={styles.emptyState}>
-                <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+                <Text
+                  variant="bodyMedium"
+                  style={{ color: theme.colors.onSurfaceVariant }}
+                >
                   No hay productos con el estado seleccionado
-                </Paragraph>
+                </Text>
               </View>
             )}
           </Card.Content>

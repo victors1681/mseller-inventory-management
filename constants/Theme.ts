@@ -4,10 +4,10 @@ import { MD3DarkTheme, MD3LightTheme } from "react-native-paper";
 // Custom colors extending the existing Colors.ts
 const customColors = {
   light: {
-    primary: "#004d66",
+    primary: "#0055b3",
     primaryContainer: "#b8e6ff",
     secondary: "#4a6741",
-    secondaryContainer: "#cced c2",
+    secondaryContainer: "#ccedc2",
     tertiary: "#3d5f75",
     tertiaryContainer: "#c1e7fd",
     surface: "#ffffff",

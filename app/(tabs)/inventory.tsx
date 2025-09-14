@@ -78,7 +78,7 @@ export default function InventoryTab() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={styles.content}>{renderCurrentScreen()}</View>
     </SafeAreaView>
   );

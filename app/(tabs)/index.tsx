@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import {
+  Avatar,
   Card,
   Chip,
   Divider,
@@ -9,7 +10,6 @@ import {
   Paragraph,
   Surface,
   Text,
-  Title,
   useTheme,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,6 +33,14 @@ export default function HomeScreen() {
     if (userProfile?.firstName) return userProfile.firstName;
     if (user?.displayName) return user.displayName;
     return "Usuario";
+  };
+
+  const getInitials = (name: string): string => {
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase())
+      .join("")
+      .slice(0, 2);
   };
 
   const quickActions = [
@@ -101,7 +109,10 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={["top", "left", "right"]}
+    >
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.container}
@@ -117,11 +128,12 @@ export default function HomeScreen() {
                 >
                   {getGreeting()}
                 </Text>
-                <Title
+                <Text
+                  variant="titleLarge"
                   style={[styles.userName, { color: theme.colors.primary }]}
                 >
                   {getUserName()}
-                </Title>
+                </Text>
                 <Text
                   style={[
                     styles.subtitle,
@@ -131,12 +143,19 @@ export default function HomeScreen() {
                   {t("dashboard.subtitle")}
                 </Text>
               </View>
-              <IconButton
-                icon="account-circle"
-                size={60}
-                iconColor={theme.colors.primary}
-                style={styles.avatarIcon}
-              />
+              {user?.photoURL ? (
+                <Avatar.Image
+                  size={60}
+                  source={{ uri: user.photoURL }}
+                  style={styles.avatarIcon}
+                />
+              ) : (
+                <Avatar.Text
+                  size={60}
+                  label={getInitials(getUserName())}
+                  style={styles.avatarIcon}
+                />
+              )}
             </View>
           </Card.Content>
         </Card>
@@ -145,7 +164,8 @@ export default function HomeScreen() {
         {userProfile && (
           <Card style={styles.card}>
             <Card.Content>
-              <Title
+              <Text
+                variant="titleLarge"
                 style={[styles.sectionTitle, { color: theme.colors.primary }]}
               >
                 <IconButton
@@ -154,7 +174,7 @@ export default function HomeScreen() {
                   iconColor={theme.colors.primary}
                 />
                 {t("dashboard.businessInfo")}
-              </Title>
+              </Text>
               <Surface style={styles.infoRow} elevation={0}>
                 <Text style={styles.infoLabel}>Empresa:</Text>
                 <Text style={styles.infoValue}>
@@ -189,7 +209,8 @@ export default function HomeScreen() {
         {/* Quick Actions */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title
+            <Text
+              variant="titleLarge"
               style={[styles.sectionTitle, { color: theme.colors.primary }]}
             >
               <IconButton
@@ -198,7 +219,7 @@ export default function HomeScreen() {
                 iconColor={theme.colors.primary}
               />
               {t("dashboard.quickActions")}
-            </Title>
+            </Text>
             <View style={styles.quickActionsGrid}>
               {quickActions.map((action) => (
                 <TouchableOpacity
@@ -227,7 +248,8 @@ export default function HomeScreen() {
         {/* Features Overview */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title
+            <Text
+              variant="titleLarge"
               style={[styles.sectionTitle, { color: theme.colors.primary }]}
             >
               <IconButton
@@ -236,7 +258,7 @@ export default function HomeScreen() {
                 iconColor={theme.colors.primary}
               />
               {t("dashboard.getStarted")}
-            </Title>
+            </Text>
             <Paragraph
               style={[
                 styles.featuresDescription,
@@ -288,7 +310,8 @@ export default function HomeScreen() {
         {/* System Status */}
         <Card style={styles.card}>
           <Card.Content>
-            <Title
+            <Text
+              variant="titleLarge"
               style={[styles.sectionTitle, { color: theme.colors.primary }]}
             >
               <IconButton
@@ -297,7 +320,7 @@ export default function HomeScreen() {
                 iconColor={theme.colors.primary}
               />
               {t("dashboard.systemStatus")}
-            </Title>
+            </Text>
             <View style={styles.statusGrid}>
               <Surface style={styles.statusCard} elevation={0}>
                 <IconButton
@@ -333,6 +356,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     paddingTop: 8,
+    paddingBottom: 0, // Remove bottom padding to eliminate gap above tab bar
   },
   loadingContainer: {
     flex: 1,

@@ -203,7 +203,7 @@ export interface SincronizarConteoRequest {
 
 export interface ResumenConteo {
   conteoId: number;
-  totalProductos: number;
+  totalProductosContados: number;
   productosContados: number;
   productosPendientes: number;
   porcentajeCompletado: number;

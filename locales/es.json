@@ -15,12 +15,13 @@
         "logout": "Cerrar Sesión",
         "login": "Iniciar Sesión",
         "signup": "Registrarse",
-        "email": "Correo Electrónico",
+        "email": "Correo",
         "password": "Contraseña",
         "name": "Nombre",
         "firstName": "Nombre",
         "lastName": "Apellido",
         "search": "Buscar",
+        "again": "De Nuevo",
         "completed": "completado"
     },
     "auth": {
@@ -167,7 +168,11 @@
         "authorizationError": "Acceso denegado",
         "validationError": "Por favor revisa tu entrada",
         "notFoundError": "Recurso no encontrado",
-        "serverError": "Ocurrió un error del servidor"
+        "serverError": "Ocurrió un error del servidor",
+        "productNotFound": "Producto no encontrado",
+        "productNotFoundMessage": "No se encontró ningún producto con los criterios de búsqueda. Por favor verifica el código de barras, código o texto e intenta de nuevo.",
+        "noProductsFoundTitle": "No se Encontraron Productos",
+        "noProductsFoundMessage": "No pudimos encontrar productos que coincidan con tu búsqueda. Intenta con un término diferente o verifica la información."
     },
     "messages": {
         "welcome": "Bienvenido a MSeller",

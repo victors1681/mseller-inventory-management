@@ -1,7 +1,9 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -10,10 +12,10 @@ import {
 import {
   Button,
   Card,
-  Paragraph,
   Snackbar,
+  Surface,
+  Text,
   TextInput,
-  Title,
   useTheme,
 } from "react-native-paper";
 import { auth } from "../../config/firebase";
@@ -56,6 +58,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
     }
   };
 
+  const handleRegister = async () => {
+    try {
+      await Linking.openURL("https://cloud.mseller.app/register/");
+    } catch (error) {
+      console.error("Error opening registration URL:", error);
+      // Fallback to onNavigateToSignUp if available
+      if (onNavigateToSignUp) {
+        onNavigateToSignUp();
+      }
+    }
+  };
+
   const getErrorMessage = (errorCode: string): string => {
     switch (errorCode) {
       case "auth/invalid-email":
@@ -74,91 +88,138 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.content}>
-          <Card
-            style={[styles.card, { backgroundColor: theme.colors.surface }]}
-          >
-            <Card.Content>
-              <Title style={[styles.title, { color: theme.colors.primary }]}>
-                {t("messages.welcome")}
-              </Title>
-              <Paragraph
-                style={[styles.subtitle, { color: theme.colors.onSurface }]}
+    <View style={styles.container}>
+      <Surface style={styles.background}>
+        <KeyboardAvoidingView
+          style={styles.keyboardContainer}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.content}>
+              {/* App Logo/Branding */}
+              <View style={styles.logoContainer}>
+                <Image
+                  source={require("../../assets/images/mseller-logo-dark.png")}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </View>
+
+              {/* Login Card */}
+              <Card
+                style={[styles.card, { backgroundColor: theme.colors.surface }]}
               >
-                {t("auth.signIn")}
-              </Paragraph>
+                <Card.Content style={styles.cardContent}>
+                  <Text
+                    variant="headlineSmall"
+                    style={[styles.title, { color: theme.colors.onSurface }]}
+                  >
+                    {t("messages.welcome")}
+                  </Text>
+                  <Text
+                    variant="bodyMedium"
+                    style={[
+                      styles.subtitle,
+                      { color: theme.colors.onSurfaceVariant },
+                    ]}
+                  >
+                    {t("auth.signIn")}
+                  </Text>
 
-              <TextInput
-                label={t("common.email")}
-                value={email}
-                onChangeText={setEmail}
-                mode="outlined"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                style={styles.input}
-                disabled={loading}
-              />
-
-              <TextInput
-                label={t("common.password")}
-                value={password}
-                onChangeText={setPassword}
-                mode="outlined"
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoComplete="password"
-                style={styles.input}
-                disabled={loading}
-                right={
-                  <TextInput.Icon
-                    icon={showPassword ? "eye-off" : "eye"}
-                    onPress={() => setShowPassword(!showPassword)}
+                  <TextInput
+                    label={t("common.email")}
+                    value={email}
+                    onChangeText={setEmail}
+                    mode="outlined"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                    style={styles.input}
+                    disabled={loading}
+                    left={<TextInput.Icon icon="email" />}
                   />
-                }
-              />
 
-              <Button
-                mode="contained"
-                onPress={handleLogin}
-                loading={loading}
-                disabled={loading}
-                style={styles.button}
-                contentStyle={styles.buttonContent}
-              >
-                {t("auth.signIn")}
-              </Button>
+                  <TextInput
+                    label={t("common.password")}
+                    value={password}
+                    onChangeText={setPassword}
+                    mode="outlined"
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    style={styles.input}
+                    disabled={loading}
+                    left={<TextInput.Icon icon="lock" />}
+                    right={
+                      <TextInput.Icon
+                        icon={showPassword ? "eye-off" : "eye"}
+                        onPress={() => setShowPassword(!showPassword)}
+                      />
+                    }
+                  />
 
-              {onNavigateToPasswordReset && (
-                <Button
-                  mode="text"
-                  onPress={onNavigateToPasswordReset}
-                  disabled={loading}
-                  style={styles.textButton}
-                >
-                  {t("auth.forgotPassword")}
-                </Button>
-              )}
+                  <Button
+                    mode="contained"
+                    onPress={handleLogin}
+                    loading={loading}
+                    disabled={loading}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
+                  >
+                    {t("auth.signIn")}
+                  </Button>
 
-              {onNavigateToSignUp && (
-                <Button
-                  mode="text"
-                  onPress={onNavigateToSignUp}
-                  disabled={loading}
-                  style={styles.textButton}
-                >
-                  {t("auth.dontHaveAccount")}
-                </Button>
-              )}
-            </Card.Content>
-          </Card>
-        </View>
-      </ScrollView>
+                  {onNavigateToPasswordReset && (
+                    <Button
+                      mode="text"
+                      onPress={onNavigateToPasswordReset}
+                      disabled={loading}
+                      style={styles.textButton}
+                      textColor={theme.colors.primary}
+                    >
+                      {t("auth.forgotPassword")}
+                    </Button>
+                  )}
+
+                  <View style={styles.dividerContainer}>
+                    <View
+                      style={[
+                        styles.divider,
+                        { backgroundColor: theme.colors.outline },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.dividerText,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      or
+                    </Text>
+                    <View
+                      style={[
+                        styles.divider,
+                        { backgroundColor: theme.colors.outline },
+                      ]}
+                    />
+                  </View>
+
+                  <Button
+                    mode="outlined"
+                    onPress={handleRegister}
+                    disabled={loading}
+                    style={styles.registerButton}
+                    contentStyle={styles.buttonContent}
+                    icon="account-plus"
+                  >
+                    {t("auth.dontHaveAccount")}
+                  </Button>
+                </Card.Content>
+              </Card>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Surface>
 
       <Snackbar
         visible={!!error}
@@ -171,7 +232,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
       >
         {error}
       </Snackbar>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -179,29 +240,63 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  background: {
+    flex: 1,
+  },
+  keyboardContainer: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: 20,
   },
   content: {
     flex: 1,
     justifyContent: "center",
+    maxWidth: 400,
+    alignSelf: "center",
+    width: "100%",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  logo: {
+    width: 230,
+    height: 140,
+    marginBottom: 16,
+  },
+  appName: {
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  tagline: {
+    textAlign: "center",
+    marginBottom: 8,
   },
   card: {
-    elevation: 4,
-    borderRadius: 12,
+    elevation: 8,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+  },
+  cardContent: {
+    padding: 24,
   },
   title: {
     textAlign: "center",
-    fontSize: 28,
     fontWeight: "bold",
     marginBottom: 8,
   },
   subtitle: {
     textAlign: "center",
-    fontSize: 16,
-    marginBottom: 24,
+    marginBottom: 32,
   },
   input: {
     marginBottom: 16,
@@ -209,12 +304,30 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     marginBottom: 16,
+    borderRadius: 8,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: 12,
   },
   textButton: {
-    marginTop: 8,
+    marginBottom: 8,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    fontSize: 14,
+  },
+  registerButton: {
+    borderRadius: 8,
+    borderWidth: 1.5,
   },
 });
 

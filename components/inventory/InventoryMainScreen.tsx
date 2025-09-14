@@ -7,11 +7,11 @@ import {
   Chip,
   Divider,
   FAB,
+  Icon,
   IconButton,
-  Paragraph,
   ProgressBar,
   Snackbar,
-  Title,
+  Text,
   useTheme,
 } from "react-native-paper";
 import { CustomTheme } from "../../constants/Theme";
@@ -141,16 +141,21 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
   const getCountStatusColor = (estado: EstadoConteo) => {
     switch (estado) {
       case EstadoConteo.EnProgreso:
-        return theme.colors.primary;
+        return "#1976D2"; // Material Blue 700
       case EstadoConteo.Completado:
-        return theme.colors.secondary;
+        return "#388E3C"; // Material Green 700
       case EstadoConteo.Reconciliado:
-        return theme.colors.tertiary;
+        return "#7B1FA2"; // Material Purple 700
       case EstadoConteo.Planificado:
-        return theme.colors.outline;
+        return "#616161"; // Material Grey 700
       default:
-        return theme.colors.error;
+        return "#D32F2F"; // Material Red 700
     }
+  };
+
+  const getCountStatusTextColor = (estado: EstadoConteo) => {
+    // All these background colors work well with white text
+    return "#FFFFFF";
   };
 
   const getCountStatusText = (estado: EstadoConteo) => {
@@ -177,7 +182,7 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
   if (!userProfile) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <Title>{t("common.loading")}</Title>
+        <Text variant="titleLarge">{t("common.loading")}</Text>
       </View>
     );
   }
@@ -185,10 +190,10 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
   if (!warehouseId) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <Title style={{ color: theme.colors.error }}>
+        <Text variant="titleLarge" style={{ color: theme.colors.error }}>
           {t("errors.genericError")}
-        </Title>
-        <Paragraph>Invalid warehouse configuration</Paragraph>
+        </Text>
+        <Text variant="bodyMedium">Invalid warehouse configuration</Text>
       </View>
     );
   }
@@ -208,22 +213,28 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
           <Card.Content>
             <View style={styles.header}>
               <View style={styles.headerInfo}>
-                <Title style={{ color: theme.colors.primary }}>
+                <Text
+                  variant="titleLarge"
+                  style={{ color: theme.colors.primary }}
+                >
                   {t("inventory.inventoryCount")} {t("inventory.mobile")}
-                </Title>
-                <Paragraph style={{ color: theme.colors.onSurface }}>
+                </Text>
+                <Text
+                  variant="bodyMedium"
+                  style={{ color: theme.colors.onSurface }}
+                >
                   {t("inventory.warehouse")}: {userProfile.warehouse}
-                </Paragraph>
+                </Text>
               </View>
               <View style={styles.headerActions}>
-                {onNavigateToDemo && (
+                {/* {onNavigateToDemo && (
                   <IconButton
                     icon="information"
                     size={24}
                     onPress={onNavigateToDemo}
                     iconColor={theme.colors.secondary}
                   />
-                )}
+                )} */}
                 <IconButton
                   icon="refresh"
                   size={24}
@@ -241,12 +252,15 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
             <Card.Content>
               <View style={styles.offlineAlert}>
                 <View style={styles.offlineInfo}>
-                  <Title style={{ color: theme.colors.secondary }}>
+                  <Text
+                    variant="titleLarge"
+                    style={{ color: theme.colors.secondary }}
+                  >
                     {t("inventory.offlineOperations")}
-                  </Title>
-                  <Paragraph>
+                  </Text>
+                  <Text variant="bodyMedium">
                     {offlineOperationsCount} operations pending sync
-                  </Paragraph>
+                  </Text>
                 </View>
                 <Button
                   mode="contained"
@@ -268,44 +282,68 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
           >
             <Card.Content>
               <View style={styles.activeCountHeader}>
-                <Title style={{ color: theme.colors.primary }}>
-                  {t("inventory.activeCount")}
-                </Title>
-                <Chip
-                  icon="clipboard-check"
-                  style={{
-                    backgroundColor: getCountStatusColor(activeCount.estado),
-                  }}
-                  textStyle={{ color: theme.colors.onPrimary }}
+                <Text
+                  variant="titleLarge"
+                  style={{ color: theme.colors.primary }}
                 >
-                  {getCountStatusText(activeCount.estado)}
-                </Chip>
+                  {t("inventory.activeCount")}
+                </Text>
+                <View
+                  style={[
+                    styles.customChip,
+                    {
+                      backgroundColor: getCountStatusColor(activeCount.estado),
+                    },
+                  ]}
+                >
+                  <Icon
+                    source="clipboard-check"
+                    size={16}
+                    color={getCountStatusTextColor(activeCount.estado)}
+                  />
+                  <Text
+                    variant="labelMedium"
+                    style={{
+                      color: getCountStatusTextColor(activeCount.estado),
+                      marginLeft: 6,
+                    }}
+                  >
+                    {getCountStatusText(activeCount.estado)}
+                  </Text>
+                </View>
               </View>
 
-              <Paragraph style={styles.countDescription}>
+              <Text variant="bodyMedium" style={styles.countDescription}>
                 {activeCount.descripcion}
-              </Paragraph>
+              </Text>
 
               {countSummary && (
                 <View style={styles.progressSection}>
                   <View style={styles.progressHeader}>
-                    <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+                    <Text
+                      variant="bodyMedium"
+                      style={{ color: theme.colors.onSurfaceVariant }}
+                    >
                       {t("inventory.countProgress")}
-                    </Paragraph>
-                    <Paragraph style={{ color: theme.colors.primary }}>
-                      {countSummary.productosContados} /{" "}
-                      {countSummary.totalProductos}
-                    </Paragraph>
+                    </Text>
+                    <Text
+                      variant="bodyMedium"
+                      style={{ color: theme.colors.primary }}
+                    >
+                      {countSummary.productosPendientes} /{" "}
+                      {countSummary.totalProductosContados +
+                        countSummary.productosPendientes}
+                    </Text>
                   </View>
                   <ProgressBar
                     progress={countSummary.porcentajeCompletado / 100}
                     color={theme.colors.primary}
                     style={styles.progressBar}
                   />
-                  <Paragraph style={styles.progressText}>
+                  <Text variant="bodyMedium" style={styles.progressText}>
                     {countSummary.porcentajeCompletado.toFixed(1)}%{" "}
                     {t("common.completed")}
-                  </Paragraph>
+                  </Text>
                 </View>
               )}
 
@@ -337,12 +375,18 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
             style={[styles.card, { backgroundColor: theme.colors.surface }]}
           >
             <Card.Content style={styles.noActiveCount}>
-              <Title style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text
+                variant="titleLarge"
+                style={{ color: theme.colors.onSurfaceVariant }}
+              >
                 {t("inventory.noActiveCount")}
-              </Title>
-              <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+              </Text>
+              <Text
+                variant="bodyMedium"
+                style={{ color: theme.colors.onSurfaceVariant }}
+              >
                 No hay conteos activos en este almacén
-              </Paragraph>
+              </Text>
             </Card.Content>
           </Card>
         )}
@@ -353,26 +397,32 @@ const InventoryMainScreen: React.FC<InventoryMainScreenProps> = ({
             style={[styles.card, { backgroundColor: theme.colors.surface }]}
           >
             <Card.Content>
-              <Title
+              <Text
+                variant="titleLarge"
                 style={{ color: theme.colors.onSurface, marginBottom: 16 }}
               >
                 Conteos Recientes
-              </Title>
+              </Text>
               {allCounts.slice(0, 5).map((conteo) => (
                 <View key={conteo.id} style={styles.countItem}>
                   <View style={styles.countItemInfo}>
-                    <Paragraph style={{ fontWeight: "bold" }}>
+                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
                       {conteo.descripcion}
-                    </Paragraph>
-                    <Paragraph style={{ color: theme.colors.onSurfaceVariant }}>
+                    </Text>
+                    <Text
+                      variant="bodyMedium"
+                      style={{ color: theme.colors.onSurfaceVariant }}
+                    >
                       {new Date(conteo.fechaCreacion).toLocaleDateString()}
-                    </Paragraph>
+                    </Text>
                   </View>
                   <Chip
                     style={{
                       backgroundColor: getCountStatusColor(conteo.estado),
                     }}
-                    textStyle={{ color: theme.colors.onPrimary }}
+                    textStyle={{
+                      color: getCountStatusTextColor(conteo.estado),
+                    }}
                   >
                     {getCountStatusText(conteo.estado)}
                   </Chip>
@@ -515,6 +565,14 @@ const styles = StyleSheet.create({
   },
   countItemInfo: {
     flex: 1,
+  },
+  customChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignSelf: "flex-start",
   },
   fab: {
     position: "absolute",

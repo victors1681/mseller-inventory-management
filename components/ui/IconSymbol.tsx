@@ -10,6 +10,7 @@ const MAPPING = {
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
   "barcodescan.fill": "qr-code-scanner",
+  barcode: "qr-code",
   "profile.fill": "person",
   "settings.fill": "settings",
 } as const;

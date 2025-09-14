@@ -61,6 +61,15 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="ProductScreen"
+          options={{
+            title: t("navigation.products"),
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="barcode" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="profile"
           options={{
             title: t("navigation.profile"),

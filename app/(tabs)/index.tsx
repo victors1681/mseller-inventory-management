@@ -1,107 +1,487 @@
-import { Image } from "expo-image";
-import { StyleSheet } from "react-native";
+import { router } from "expo-router";
+import React from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Card,
+  Chip,
+  Divider,
+  IconButton,
+  Paragraph,
+  Surface,
+  Text,
+  Title,
+  useTheme,
+} from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { useUser } from "@/contexts/UserContext";
-import { useTheme } from "react-native-paper";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function HomeScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { user, userProfile, loading } = useUser();
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t("dashboard.goodMorning");
+    if (hour < 18) return t("dashboard.goodAfternoon");
+    return t("dashboard.goodEvening");
+  };
+
+  const getUserName = () => {
+    if (userProfile?.firstName) return userProfile.firstName;
+    if (user?.displayName) return user.displayName;
+    return "Usuario";
+  };
+
+  const quickActions = [
+    {
+      id: "search",
+      title: t("dashboard.searchProducts"),
+      icon: "magnify",
+      color: theme.colors.primary,
+      onPress: () => router.push("/(tabs)/ProductScreen"),
+    },
+    {
+      id: "inventory",
+      title: t("dashboard.viewInventory"),
+      icon: "package-variant",
+      color: theme.colors.secondary,
+      onPress: () => router.push("/(tabs)/inventory"),
+    },
+    {
+      id: "profile",
+      title: t("navigation.profile"),
+      icon: "account",
+      color: theme.colors.tertiary,
+      onPress: () => router.push("/(tabs)/profile"),
+    },
+  ];
+
+  const features = [
+    {
+      id: "products",
+      title: t("dashboard.productManagement"),
+      description: t("dashboard.productManagementDesc"),
+      icon: "barcode-scan",
+      color: theme.colors.primary,
+    },
+    {
+      id: "inventory",
+      title: t("dashboard.inventoryTracking"),
+      description: t("dashboard.inventoryTrackingDesc"),
+      icon: "clipboard-list",
+      color: theme.colors.secondary,
+    },
+    {
+      id: "labels",
+      title: t("dashboard.labelPrinting"),
+      description: t("dashboard.labelPrintingDesc"),
+      icon: "qr-code",
+      color: theme.colors.tertiary,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
+      >
+        <View
+          style={[
+            styles.loadingContainer,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Text>Cargando...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{
-        light: theme.colors.primary,
-        dark: theme.colors.primary,
-      }}
-      headerImage={
-        <Image
-          source={require("@/assets/images/partial-react-logo.png")}
-          style={styles.reactLogo}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">
-          Welcome
-          {userProfile?.firstName
-            ? `, ${userProfile.firstName}`
-            : user?.displayName
-            ? `, ${user.displayName}`
-            : ""}
-          !
-        </ThemedText>
-        <HelloWave />
-      </ThemedView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Welcome Header */}
+        <Card style={[styles.card, styles.welcomeCard]}>
+          <Card.Content>
+            <View style={styles.welcomeHeader}>
+              <View style={styles.welcomeText}>
+                <Text
+                  style={[styles.greeting, { color: theme.colors.onSurface }]}
+                >
+                  {getGreeting()}
+                </Text>
+                <Title
+                  style={[styles.userName, { color: theme.colors.primary }]}
+                >
+                  {getUserName()}
+                </Title>
+                <Text
+                  style={[
+                    styles.subtitle,
+                    { color: theme.colors.onSurfaceVariant },
+                  ]}
+                >
+                  {t("dashboard.subtitle")}
+                </Text>
+              </View>
+              <IconButton
+                icon="account-circle"
+                size={60}
+                iconColor={theme.colors.primary}
+                style={styles.avatarIcon}
+              />
+            </View>
+          </Card.Content>
+        </Card>
 
-      {userProfile && (
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Business Information</ThemedText>
-          <ThemedText>
-            <ThemedText type="defaultSemiBold">Company:</ThemedText>{" "}
-            {userProfile.business.name}
-          </ThemedText>
-          <ThemedText>
-            <ThemedText type="defaultSemiBold">Role:</ThemedText>{" "}
-            {userProfile.type}
-          </ThemedText>
-          <ThemedText>
-            <ThemedText type="defaultSemiBold">Mode:</ThemedText>{" "}
-            {userProfile.testMode ? "Test" : "Production"}
-          </ThemedText>
-        </ThemedView>
-      )}
+        {/* Business Information */}
+        {userProfile && (
+          <Card style={styles.card}>
+            <Card.Content>
+              <Title
+                style={[styles.sectionTitle, { color: theme.colors.primary }]}
+              >
+                <IconButton
+                  icon="domain"
+                  size={20}
+                  iconColor={theme.colors.primary}
+                />
+                {t("dashboard.businessInfo")}
+              </Title>
+              <Surface style={styles.infoRow} elevation={0}>
+                <Text style={styles.infoLabel}>Empresa:</Text>
+                <Text style={styles.infoValue}>
+                  {userProfile.business.name}
+                </Text>
+              </Surface>
+              <Surface style={styles.infoRow} elevation={0}>
+                <Text style={styles.infoLabel}>Rol:</Text>
+                <Text style={styles.infoValue}>{userProfile.type}</Text>
+              </Surface>
+              <Surface style={styles.infoRow} elevation={0}>
+                <Text style={styles.infoLabel}>Modo:</Text>
+                <Chip
+                  icon={userProfile.testMode ? "test-tube" : "check-circle"}
+                  compact
+                  style={[
+                    styles.modeChip,
+                    {
+                      backgroundColor: userProfile.testMode
+                        ? theme.colors.tertiary + "20"
+                        : theme.colors.primaryContainer,
+                    },
+                  ]}
+                >
+                  {userProfile.testMode ? "Pruebas" : "Producción"}
+                </Chip>
+              </Surface>
+            </Card.Content>
+          </Card>
+        )}
 
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Getting Started</ThemedText>
-        <ThemedText>
-          Your inventory management system is ready to use.{" "}
-          <ThemedText type="defaultSemiBold">Navigate</ThemedText> to different
-          tabs to explore features.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">
-            npm run reset-project
-          </ThemedText>{" "}
-          to get a fresh <ThemedText type="defaultSemiBold">app</ThemedText>{" "}
-          directory. This will move the current{" "}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* Quick Actions */}
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title
+              style={[styles.sectionTitle, { color: theme.colors.primary }]}
+            >
+              <IconButton
+                icon="lightning-bolt"
+                size={20}
+                iconColor={theme.colors.primary}
+              />
+              {t("dashboard.quickActions")}
+            </Title>
+            <View style={styles.quickActionsGrid}>
+              {quickActions.map((action) => (
+                <TouchableOpacity
+                  key={action.id}
+                  style={[
+                    styles.actionCard,
+                    { backgroundColor: action.color + "15" },
+                  ]}
+                  onPress={action.onPress}
+                >
+                  <IconButton
+                    icon={action.icon}
+                    size={32}
+                    iconColor={action.color}
+                    style={styles.actionIcon}
+                  />
+                  <Text style={[styles.actionTitle, { color: action.color }]}>
+                    {action.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* Features Overview */}
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title
+              style={[styles.sectionTitle, { color: theme.colors.primary }]}
+            >
+              <IconButton
+                icon="star"
+                size={20}
+                iconColor={theme.colors.primary}
+              />
+              {t("dashboard.getStarted")}
+            </Title>
+            <Paragraph
+              style={[
+                styles.featuresDescription,
+                { color: theme.colors.onSurfaceVariant },
+              ]}
+            >
+              {t("dashboard.exploreFeatures")}
+            </Paragraph>
+            <Divider style={styles.divider} />
+            {features.map((feature, index) => (
+              <View key={feature.id}>
+                <Surface style={styles.featureRow} elevation={0}>
+                  <IconButton
+                    icon={feature.icon}
+                    size={24}
+                    iconColor={feature.color}
+                    style={[
+                      styles.featureIcon,
+                      { backgroundColor: feature.color + "15" },
+                    ]}
+                  />
+                  <View style={styles.featureContent}>
+                    <Text
+                      style={[
+                        styles.featureTitle,
+                        { color: theme.colors.onSurface },
+                      ]}
+                    >
+                      {feature.title}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.featureDescription,
+                        { color: theme.colors.onSurfaceVariant },
+                      ]}
+                    >
+                      {feature.description}
+                    </Text>
+                  </View>
+                </Surface>
+                {index < features.length - 1 && (
+                  <Divider style={styles.featureDivider} />
+                )}
+              </View>
+            ))}
+          </Card.Content>
+        </Card>
+
+        {/* System Status */}
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title
+              style={[styles.sectionTitle, { color: theme.colors.primary }]}
+            >
+              <IconButton
+                icon="server-network"
+                size={20}
+                iconColor={theme.colors.primary}
+              />
+              {t("dashboard.systemStatus")}
+            </Title>
+            <View style={styles.statusGrid}>
+              <Surface style={styles.statusCard} elevation={0}>
+                <IconButton
+                  icon="wifi"
+                  size={24}
+                  iconColor={theme.colors.primary}
+                />
+                <Text style={styles.statusLabel}>Conexión</Text>
+                <Chip icon="check" compact style={styles.statusChip}>
+                  Activa
+                </Chip>
+              </Surface>
+              <Surface style={styles.statusCard} elevation={0}>
+                <IconButton
+                  icon="database"
+                  size={24}
+                  iconColor={theme.colors.secondary}
+                />
+                <Text style={styles.statusLabel}>Base de Datos</Text>
+                <Chip icon="check" compact style={styles.statusChip}>
+                  Online
+                </Chip>
+              </Surface>
+            </View>
+          </Card.Content>
+        </Card>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    padding: 16,
+    paddingTop: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  card: {
+    marginBottom: 16,
+    borderRadius: 12,
+    elevation: 4,
+  },
+  welcomeCard: {
+    backgroundColor: "#f8f9fa",
+  },
+  welcomeHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  welcomeText: {
+    flex: 1,
+  },
+  greeting: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  userName: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginVertical: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    fontStyle: "italic",
+  },
+  avatarIcon: {
+    margin: 0,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 8,
+    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#666",
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    flex: 2,
+    textAlign: "right",
+  },
+  modeChip: {
+    alignSelf: "flex-end",
+  },
+  quickActionsGrid: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  actionCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    minHeight: 100,
+    justifyContent: "center",
+  },
+  actionIcon: {
+    margin: 0,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+  actionTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  featuresDescription: {
+    fontSize: 14,
+    marginBottom: 16,
+    lineHeight: 20,
+  },
+  divider: {
+    marginBottom: 16,
+  },
+  featureRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: "#f8f9fa",
+    marginBottom: 8,
+  },
+  featureIcon: {
+    margin: 0,
+    marginRight: 12,
+  },
+  featureContent: {
+    flex: 1,
+  },
+  featureTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  featureDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  featureDivider: {
+    marginVertical: 8,
+  },
+  statusGrid: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  statusCard: {
+    flex: 1,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    backgroundColor: "#f8f9fa",
+  },
+  statusLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 4,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  statusChip: {
+    backgroundColor: "#e8f5e8",
   },
 });

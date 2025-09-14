@@ -61,6 +61,7 @@
         "home": "Home",
         "explore": "Explore",
         "inventory": "Inventory",
+        "products": "Products",
         "profile": "Profile",
         "apiTest": "API Test",
         "settings": "Settings"
@@ -87,6 +88,7 @@
         "addProduct": "Add Product",
         "editProduct": "Edit Product",
         "deleteProduct": "Delete Product",
+        "createLabel": "Create Label",
         "productName": "Product Name",
         "productCode": "Product Code",
         "price": "Price",
@@ -153,5 +155,26 @@
         "operationCompleted": "Operation completed successfully",
         "confirmDelete": "Are you sure you want to delete this item?",
         "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "subtitle": "Inventory Management System",
+        "quickActions": "Quick Actions",
+        "searchProducts": "Search Products",
+        "viewInventory": "View Inventory",
+        "recentActivity": "Recent Activity",
+        "systemStatus": "System Status",
+        "businessInfo": "Business Information",
+        "getStarted": "Getting Started",
+        "exploreFeatures": "Explore the powerful features of MSeller to manage your inventory efficiently.",
+        "productManagement": "Product Management",
+        "productManagementDesc": "Search, view, and manage your product catalog with ease.",
+        "inventoryTracking": "Inventory Tracking",
+        "inventoryTrackingDesc": "Keep track of stock levels across multiple locations.",
+        "labelPrinting": "Label Printing",
+        "labelPrintingDesc": "Generate and print QR code labels for your products.",
+        "goodMorning": "Good morning",
+        "goodAfternoon": "Good afternoon",
+        "goodEvening": "Good evening"
     }
 }

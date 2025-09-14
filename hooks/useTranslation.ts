@@ -80,6 +80,8 @@ export type TranslationKey =
   // Navigation
   | "navigation.home"
   | "navigation.explore"
+  | "navigation.inventory"
+  | "navigation.products"
   | "navigation.profile"
   | "navigation.apiTest"
   | "navigation.settings"

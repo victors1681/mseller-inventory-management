@@ -69,6 +69,7 @@
 - Expo CLI
 - iOS Simulator (for iOS development)
 - Android Studio/Emulator (for Android development)
+- **MSeller Account**: Create an account at [https://cloud.mseller.app/register/](https://cloud.mseller.app/register/)
 
 ### Installation
 

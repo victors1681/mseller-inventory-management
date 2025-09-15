@@ -14,13 +14,25 @@ import {
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useManualScreenTracking } from "@/components/common/ScreenTracking";
 import { useUser } from "@/contexts/UserContext";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useScreenTracking } from "@/services/screenTracker";
 
 export default function HomeScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
   const { user, userProfile, loading } = useUser();
+
+  // Track this screen
+  useScreenTracking("home_screen", {
+    user_id: user?.uid,
+    has_profile: !!userProfile,
+    loading_state: loading,
+  });
+
+  // Get manual tracking functions
+  const { trackButtonClick } = useManualScreenTracking();
 
   const getGreeting = () => {
     const hour = new Date().getHours();

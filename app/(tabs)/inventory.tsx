@@ -1,3 +1,5 @@
+import { useManualScreenTracking } from "@/components/common/ScreenTracking";
+import { useScreenTracking } from "@/services/screenTracker";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,17 +18,34 @@ export default function InventoryTab() {
     null
   );
 
+  // Track the main inventory tab
+  useScreenTracking("inventory_tab", {
+    current_sub_screen: currentScreen,
+    has_selected_conteo: !!selectedConteo,
+  });
+
+  const { trackInteraction } = useManualScreenTracking();
+
   const handleNavigateToCount = (conteo: InventarioConteo) => {
+    trackInteraction("navigation", "inventory_tab", "navigate_to_count", {
+      conteo_id: conteo.id,
+      conteo_description: conteo.descripcion,
+    });
     setSelectedConteo(conteo);
     setCurrentScreen("counting");
   };
 
   const handleNavigateToProgress = (conteo: InventarioConteo) => {
+    trackInteraction("navigation", "inventory_tab", "navigate_to_progress", {
+      conteo_id: conteo.id,
+      conteo_description: conteo.descripcion,
+    });
     setSelectedConteo(conteo);
     setCurrentScreen("progress");
   };
 
   const handleNavigateToDemo = () => {
+    trackInteraction("navigation", "inventory_tab", "navigate_to_demo");
     setCurrentScreen("demo");
     setSelectedConteo(null);
   };

@@ -3,6 +3,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { trackApiCall, trackError } from "../config/datadog";
 import {
   getEnvironmentConfig,
   logEnvironmentConfig,
@@ -26,9 +27,12 @@ export const restClient: AxiosInstance = axios.create({
 // Log the configuration on startup
 logEnvironmentConfig();
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and track requests
 restClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // Add request start time for tracking
+    (config as any).metadata = { startTime: Date.now() };
+
     try {
       const user = auth.currentUser;
       if (user) {
@@ -39,19 +43,65 @@ restClient.interceptors.request.use(
       }
     } catch (error) {
       console.error("Error getting auth token:", error);
+      trackError(error as Error, {
+        context: "auth_token_request",
+        url: config.url || "unknown",
+      });
     }
     return config;
   },
   (error: any) => {
+    trackError(error, { context: "request_interceptor" });
     return Promise.reject(error);
   }
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh and track API calls
 restClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response: AxiosResponse) => {
+    // Track successful API calls
+    const config = response.config as any;
+    const startTime = config.metadata?.startTime;
+    const duration = startTime ? Date.now() - startTime : 0;
+
+    trackApiCall(
+      response.config.url || "unknown",
+      response.config.method?.toUpperCase() || "GET",
+      response.status,
+      duration,
+      {
+        response_size: JSON.stringify(response.data).length,
+        environment: envConfig.mode,
+      }
+    );
+
+    return response;
+  },
   async (error: any) => {
     const originalRequest = error.config;
+    const startTime = originalRequest?.metadata?.startTime;
+    const duration = startTime ? Date.now() - startTime : 0;
+
+    // Track failed API calls
+    if (error.response) {
+      trackApiCall(
+        originalRequest?.url || "unknown",
+        originalRequest?.method?.toUpperCase() || "GET",
+        error.response.status,
+        duration,
+        {
+          error_message: error.message,
+          environment: envConfig.mode,
+        }
+      );
+    } else {
+      // Network or other errors
+      trackError(error, {
+        context: "api_call",
+        url: originalRequest?.url || "unknown",
+        method: originalRequest?.method || "unknown",
+      });
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -68,6 +118,10 @@ restClient.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
+        trackError(refreshError as Error, {
+          context: "token_refresh",
+          originalUrl: originalRequest?.url || "unknown",
+        });
         // Optionally redirect to login or sign out user
         // auth.signOut();
       }

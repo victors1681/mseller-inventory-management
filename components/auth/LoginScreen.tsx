@@ -1,3 +1,5 @@
+import { useManualScreenTracking } from "@/components/common/ScreenTracking";
+import { useScreenTracking } from "@/services/screenTracker";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import {
@@ -39,9 +41,22 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   const theme = useTheme() as CustomTheme;
   const { t } = useTranslation();
 
+  // Track this screen
+  useScreenTracking("login_screen", {
+    authentication_method: "email_password",
+    timestamp: new Date().toISOString(),
+  });
+
+  const { trackFormSubmission, trackButtonClick, trackScreenError } =
+    useManualScreenTracking();
+
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       setError(t("auth.invalidCredentials"));
+      trackFormSubmission("login_screen", "login_form", false, {
+        error_type: "validation",
+        error_message: "invalid_credentials",
+      });
       return;
     }
 

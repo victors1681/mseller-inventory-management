@@ -1,7 +1,7 @@
 {
   "name": "mseller-lite",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "expo start",
     "start:local": "EXPO_PUBLIC_LOCAL_MODE=true EXPO_PUBLIC_USE_LOCAL_API=true expo start",
@@ -18,6 +18,8 @@
     "build:android:prod": "eas build -p android --profile production"
   },
   "dependencies": {
+    "@datadog/mobile-react-native": "^2.12.0",
+    "@datadog/mobile-react-navigation": "^2.12.0",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-firebase/app": "^22.4.0",

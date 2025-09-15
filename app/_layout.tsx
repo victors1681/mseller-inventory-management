@@ -6,6 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React from "react";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
@@ -14,10 +15,12 @@ import "@/config/i18n";
 
 import AuthScreen from "@/components/auth/AuthScreen";
 import LoadingScreen from "@/components/auth/LoadingScreen";
+import { initializeDatadog } from "@/config/datadog";
 import { getTheme } from "@/constants/Theme";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { ScreenTracker } from "@/services/screenTracker";
 
 function RootLayoutContent() {
   const colorScheme = useColorScheme();
@@ -49,6 +52,18 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  // Initialize Datadog RUM
+  React.useEffect(() => {
+    initializeDatadog().then((initialized) => {
+      if (initialized) {
+        ScreenTracker.trackScreenView("app_launch", {
+          color_scheme: colorScheme,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    });
+  }, [colorScheme]);
 
   if (!loaded) {
     // Async font loading only occurs in development.

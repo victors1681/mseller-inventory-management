@@ -14,7 +14,8 @@
     "web:local": "EXPO_PUBLIC_LOCAL_MODE=true EXPO_PUBLIC_USE_LOCAL_API=true expo start --web",
     "lint": "expo lint",
     "setup-template": "./setup-template.sh",
-    "validate-template": "npm run lint && npx tsc --noEmit"
+    "validate-template": "npm run lint && npx tsc --noEmit",
+    "build:android:prod": "eas build -p android --profile production"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",

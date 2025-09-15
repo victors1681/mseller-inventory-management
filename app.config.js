@@ -15,6 +15,7 @@ export default {
       icon: "./assets/icons/Icon.png",
     },
     android: {
+      package: "app.mseller.msellerlite",
       icon: "./assets/icons/Icon.png",
       adaptiveIcon: {
         foregroundImage: "./assets/icons/Icon.png",
@@ -52,6 +53,9 @@ export default {
       firebaseAppId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
       firebaseDatabaseUrl: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
       firebaseMeasurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
+      eas: {
+        projectId: "8e865fbc-598d-4e71-9f6f-28964c977efb",
+      },
     },
   },
 };

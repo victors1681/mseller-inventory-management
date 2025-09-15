@@ -64,11 +64,6 @@ export const getAppConfig = () => {
       "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
     ),
     firebaseAppId: getEnvVar("EXPO_PUBLIC_FIREBASE_APP_ID"),
-
-    // Datadog config
-    datadogClientToken: getEnvVar("EXPO_PUBLIC_DATADOG_CLIENT_TOKEN"),
-    datadogApplicationId: getEnvVar("EXPO_PUBLIC_DATADOG_APPLICATION_ID"),
-
     // Local development
     localMode: getEnvBool("EXPO_PUBLIC_LOCAL_MODE"),
     useLocalApi: getEnvBool("EXPO_PUBLIC_USE_LOCAL_API"),

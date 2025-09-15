@@ -3,7 +3,6 @@
  * Prevents the entire app from crashing due to component errors
  */
 
-import { trackError } from "@/config/datadog";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -32,14 +31,6 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log the error to Datadog
-    trackError(error, {
-      context: "error_boundary",
-      component_stack: errorInfo.componentStack,
-      error_boundary: true,
-      timestamp: new Date().toISOString(),
-    });
-
     console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 

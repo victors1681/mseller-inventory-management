@@ -260,12 +260,12 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 0,
   },
   logo: {
     width: 230,
     height: 140,
-    marginBottom: 16,
+    marginBottom: 0,
   },
   appName: {
     fontWeight: "bold",

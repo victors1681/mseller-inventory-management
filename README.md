@@ -27,13 +27,6 @@
 - Dynamic language switching
 - Culturally appropriate formatting
 
-### 📊 **Analytics & Monitoring**
-
-- Datadog RUM (Real User Monitoring) integration
-- Performance tracking and crash reporting
-- User behavior analytics
-- Screen tracking and navigation monitoring
-
 ### 🖨️ **Label Printing**
 
 - Zebra printer integration
@@ -134,23 +127,13 @@ npm run build:android:prod # Android production build
 2. Enable Authentication with Email/Password
 3. Copy your Firebase config to `.env`:
 
-```env
+````env
 EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
 EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
 EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
 EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 EXPO_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-### Datadog Configuration
-
-For analytics and monitoring:
-
-```env
-EXPO_PUBLIC_DATADOG_CLIENT_TOKEN=your_datadog_token
-EXPO_PUBLIC_DATADOG_APPLICATION_ID=your_app_id
-```
 
 ## 📚 Documentation
 
@@ -158,7 +141,6 @@ EXPO_PUBLIC_DATADOG_APPLICATION_ID=your_app_id
 - [Inventory Management Guide](./docs/INVENTORY_MANAGEMENT_README.md)
 - [Environment Setup](./docs/ENVIRONMENT_SETUP.md)
 - [Local Development](./docs/LOCAL_DEVELOPMENT.md)
-- [Datadog Setup](./docs/DATADOG_SETUP_SUMMARY.md)
 
 ## 🧪 Testing
 
@@ -171,7 +153,7 @@ npm run lint
 
 # Full validation suite
 npm run validate-template
-```
+````
 
 ## 🚀 Deployment
 

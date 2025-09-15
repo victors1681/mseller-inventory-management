@@ -189,7 +189,9 @@ export class ZebraLabelService {
       console.log("ZPL Data:", zplData);
 
       // Simulate printing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(undefined), 2000)
+      );
 
       return {
         success: true,
@@ -215,7 +217,9 @@ export class ZebraLabelService {
       console.log("ZPL Data:", zplData);
 
       // Simulate printing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(undefined), 2000)
+      );
 
       return { success: true, message: "Etiqueta enviada a impresora WiFi" };
     } catch (error: any) {
@@ -235,7 +239,9 @@ export class ZebraLabelService {
       console.log("ZPL Data:", zplData);
 
       // Simulate printing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) =>
+        setTimeout(() => resolve(undefined), 2000)
+      );
 
       return { success: true, message: "Etiqueta enviada a impresora USB" };
     } catch (error: any) {

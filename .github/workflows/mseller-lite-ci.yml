@@ -1,0 +1,126 @@
+# MSeller Lite CI/CD Pipeline
+# This workflow validates the MSeller Lite inventory management app
+# It runs TypeScript compilation, ESLint, and app-specific validations
+
+name: MSeller Lite CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate TypeScript
+        run: npx tsc --noEmit
+
+      - name: Run ESLint
+        run: npx eslint . --ext .ts,.tsx,.js,.jsx
+
+      - name: Run validation script
+        run: npm run validate-template
+
+      - name: Check app configuration
+        run: |
+          if [ ! -f "app.json" ]; then
+            echo "❌ app.json file is missing"
+            exit 1
+          fi
+          if [ ! -f "package.json" ]; then
+            echo "❌ package.json file is missing"
+            exit 1
+          fi
+          echo "✅ App configuration files are present"
+
+      - name: Validate Firebase config
+        run: |
+          if [ -f ".env.example" ]; then
+            if ! grep -q "EXPO_PUBLIC_FIREBASE_API_KEY" .env.example; then
+              echo "❌ Firebase configuration template is incomplete"
+              exit 1
+            fi
+            echo "✅ Firebase configuration template is valid"
+          else
+            echo "⚠️ .env.example not found, skipping Firebase config validation"
+          fi
+
+      - name: Validate translation files
+        run: |
+          if [ ! -f "locales/en.json" ]; then
+            echo "❌ English translation file is missing"
+            exit 1
+          fi
+          if [ ! -f "locales/es.json" ]; then
+            echo "❌ Spanish translation file is missing"
+            exit 1
+          fi
+          # Validate JSON syntax
+          node -e "
+            const en = require('./locales/en.json');
+            const es = require('./locales/es.json');
+            console.log('✅ Translation files are valid JSON');
+          "
+
+      - name: Validate Expo configuration
+        run: |
+          # Check if app.json has required fields for MSeller Lite
+          node -e "
+            const config = require('./app.json');
+            if (!config.expo.name || !config.expo.slug) {
+              console.error('❌ app.json is missing required fields');
+              process.exit(1);
+            }
+            if (config.expo.name !== 'MSeller Lite') {
+              console.error('❌ App name should be MSeller Lite');
+              process.exit(1);
+            }
+            if (config.expo.slug !== 'mseller-lite') {
+              console.error('❌ App slug should be mseller-lite');
+              process.exit(1);
+            }
+            console.log('✅ Expo configuration is valid for MSeller Lite');
+          "
+
+      - name: Validate inventory management components
+        run: |
+          if [ ! -d "components/inventory" ]; then
+            echo "❌ Inventory components directory is missing"
+            exit 1
+          fi
+          if [ ! -f "services/inventoryService.ts" ]; then
+            echo "❌ Inventory service is missing"
+            exit 1
+          fi
+          if [ ! -f "types/inventory.ts" ]; then
+            echo "❌ Inventory types are missing"
+            exit 1
+          fi
+          echo "✅ Core inventory management files are present"
+
+      - name: Check MSeller Lite assets
+        run: |
+          if [ ! -f "assets/images/mseller-logo-dark.png" ]; then
+            echo "❌ MSeller logo is missing"
+            exit 1
+          fi
+          if [ ! -f "assets/icons/Icon.png" ]; then
+            echo "❌ App icon is missing"
+            exit 1
+          fi
+          echo "✅ MSeller Lite assets are present"

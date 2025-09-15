@@ -6,7 +6,6 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
@@ -16,12 +15,10 @@ import "@/config/i18n";
 import AuthScreen from "@/components/auth/AuthScreen";
 import LoadingScreen from "@/components/auth/LoadingScreen";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import { initializeDatadog } from "@/config/datadog";
 import { getTheme } from "@/constants/Theme";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { UserProvider } from "@/contexts/UserContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { ScreenTracker } from "@/services/screenTracker";
 
 function RootLayoutContent() {
   const colorScheme = useColorScheme();
@@ -53,35 +50,6 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
-  // Initialize Datadog RUM with error handling
-  React.useEffect(() => {
-    const initDatadog = async () => {
-      try {
-        const initialized = await initializeDatadog();
-        if (initialized) {
-          ScreenTracker.trackScreenView("app_launch", {
-            color_scheme: colorScheme,
-            timestamp: new Date().toISOString(),
-          });
-        }
-      } catch (error) {
-        console.error("Failed to initialize Datadog:", error);
-        // Continue app execution even if Datadog fails
-      }
-    };
-
-    // Use a timeout to ensure the app doesn't hang on Datadog initialization
-    const timeoutId = setTimeout(() => {
-      console.warn(
-        "Datadog initialization timeout - continuing without tracking"
-      );
-    }, 5000);
-
-    initDatadog().finally(() => {
-      clearTimeout(timeoutId);
-    });
-  }, [colorScheme]);
 
   if (!loaded) {
     // Async font loading only occurs in development.

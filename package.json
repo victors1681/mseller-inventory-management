@@ -18,8 +18,6 @@
     "build:android:prod": "eas build -p android --profile production --clear-cache"
   },
   "dependencies": {
-    "@datadog/mobile-react-native": "^2.12.0",
-    "@datadog/mobile-react-navigation": "^2.12.0",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-firebase/app": "^22.4.0",

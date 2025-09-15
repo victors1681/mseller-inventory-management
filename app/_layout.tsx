@@ -15,6 +15,7 @@ import "@/config/i18n";
 
 import AuthScreen from "@/components/auth/AuthScreen";
 import LoadingScreen from "@/components/auth/LoadingScreen";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { initializeDatadog } from "@/config/datadog";
 import { getTheme } from "@/constants/Theme";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -53,15 +54,32 @@ export default function RootLayout() {
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  // Initialize Datadog RUM
+  // Initialize Datadog RUM with error handling
   React.useEffect(() => {
-    initializeDatadog().then((initialized) => {
-      if (initialized) {
-        ScreenTracker.trackScreenView("app_launch", {
-          color_scheme: colorScheme,
-          timestamp: new Date().toISOString(),
-        });
+    const initDatadog = async () => {
+      try {
+        const initialized = await initializeDatadog();
+        if (initialized) {
+          ScreenTracker.trackScreenView("app_launch", {
+            color_scheme: colorScheme,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (error) {
+        console.error("Failed to initialize Datadog:", error);
+        // Continue app execution even if Datadog fails
       }
+    };
+
+    // Use a timeout to ensure the app doesn't hang on Datadog initialization
+    const timeoutId = setTimeout(() => {
+      console.warn(
+        "Datadog initialization timeout - continuing without tracking"
+      );
+    }, 5000);
+
+    initDatadog().finally(() => {
+      clearTimeout(timeoutId);
     });
   }, [colorScheme]);
 
@@ -71,12 +89,14 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <AuthProvider>
-        <UserProvider>
-          <RootLayoutContent />
-        </UserProvider>
-      </AuthProvider>
-    </PaperProvider>
+    <ErrorBoundary>
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <UserProvider>
+            <RootLayoutContent />
+          </UserProvider>
+        </AuthProvider>
+      </PaperProvider>
+    </ErrorBoundary>
   );
 }

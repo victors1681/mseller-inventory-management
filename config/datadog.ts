@@ -10,6 +10,7 @@ import {
 import Constants from "expo-constants";
 import { getEnvironmentConfig } from "./environment";
 import { auth } from "./firebase";
+import { getEnvVar } from "./safeEnv";
 
 export interface DatadogConfig {
   clientToken: string;
@@ -20,22 +21,41 @@ export interface DatadogConfig {
 
 // Get app and user context for logging
 const getAppContext = () => {
-  const currentUser = auth.currentUser;
-  const appVersion = Constants.expoConfig?.version || "1.0.0";
+  try {
+    const currentUser = auth.currentUser;
+    const appVersion =
+      Constants.expoConfig?.version || Constants.manifest?.version || "1.0.0";
+    const appName =
+      Constants.expoConfig?.name || Constants.manifest?.name || "mseller-lite";
 
-  return {
-    app_version: appVersion,
-    app_name: Constants.expoConfig?.name || "mseller-lite",
-    user_id: currentUser?.uid || "anonymous",
-    user_email: currentUser?.email || "unknown",
-    user_display_name: currentUser?.displayName || "unknown",
-    is_authenticated: !!currentUser,
-    expo_version: Constants.expoVersion,
-    platform: Constants.platform?.ios ? "ios" : "android",
-  };
-};
-
-// Function to log user authentication events with full context
+    return {
+      app_version: appVersion,
+      app_name: appName,
+      user_id: currentUser?.uid || "anonymous",
+      user_email: currentUser?.email || "unknown",
+      user_display_name: currentUser?.displayName || "unknown",
+      is_authenticated: !!currentUser,
+      expo_version: Constants.expoVersion || "unknown",
+      platform: Constants.platform?.ios
+        ? "ios"
+        : Constants.platform?.android
+        ? "android"
+        : "unknown",
+    };
+  } catch (error) {
+    console.warn("📊 Failed to get app context:", error);
+    return {
+      app_version: "1.0.0",
+      app_name: "mseller-lite",
+      user_id: "anonymous",
+      user_email: "unknown",
+      user_display_name: "unknown",
+      is_authenticated: false,
+      expo_version: "unknown",
+      platform: "unknown",
+    };
+  }
+}; // Function to log user authentication events with full context
 export const trackUserAuth = (
   eventType: "login" | "logout" | "signup",
   additionalAttributes?: Record<string, any>
@@ -54,28 +74,39 @@ export const getDatadogConfig = (): DatadogConfig => {
   const envConfig = getEnvironmentConfig();
 
   return {
-    clientToken: process.env.EXPO_PUBLIC_DATADOG_CLIENT_TOKEN || "",
-    applicationId: process.env.EXPO_PUBLIC_DATADOG_APPLICATION_ID || "",
+    clientToken: getEnvVar("EXPO_PUBLIC_DATADOG_CLIENT_TOKEN", ""),
+    applicationId: getEnvVar("EXPO_PUBLIC_DATADOG_APPLICATION_ID", ""),
     environment: envConfig.mode,
     enabled: !!(
-      process.env.EXPO_PUBLIC_DATADOG_CLIENT_TOKEN &&
-      process.env.EXPO_PUBLIC_DATADOG_APPLICATION_ID
+      getEnvVar("EXPO_PUBLIC_DATADOG_CLIENT_TOKEN") &&
+      getEnvVar("EXPO_PUBLIC_DATADOG_APPLICATION_ID")
     ),
   };
 };
 
 // Initialize Datadog RUM
 export const initializeDatadog = async (): Promise<boolean> => {
-  const config = getDatadogConfig();
-
-  if (!config.enabled) {
-    console.log(
-      "📊 Datadog RUM: Disabled - Missing client token or application ID"
-    );
-    return false;
-  }
-
   try {
+    const config = getDatadogConfig();
+
+    if (!config.enabled) {
+      console.log(
+        "📊 Datadog RUM: Disabled - Missing client token or application ID"
+      );
+      return false;
+    }
+
+    // Additional validation for production
+    if (!config.clientToken || config.clientToken.length < 10) {
+      console.warn("📊 Datadog RUM: Invalid client token");
+      return false;
+    }
+
+    if (!config.applicationId || config.applicationId.length < 10) {
+      console.warn("📊 Datadog RUM: Invalid application ID");
+      return false;
+    }
+
     const datadogConfig = new DdSdkReactNativeConfiguration(
       config.clientToken,
       config.environment,
@@ -105,11 +136,10 @@ export const initializeDatadog = async (): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error("📊 Datadog RUM: Initialization failed", error);
+    // Don't re-throw the error - just return false to prevent app crash
     return false;
   }
-};
-
-// Track custom events - simplified logging approach
+}; // Track custom events - simplified logging approach
 export const trackEvent = (name: string, attributes?: Record<string, any>) => {
   const config = getDatadogConfig();
   const appContext = getAppContext();

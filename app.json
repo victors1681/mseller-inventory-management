@@ -2,7 +2,7 @@
   "expo": {
     "name": "MSeller Lite",
     "slug": "mseller-lite",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icons/Icon.png",
     "scheme": "msellerlite",
@@ -13,9 +13,9 @@
       "icon": "./assets/icons/Icon.png"
     },
     "android": {
-      "icon": "./assets/icons/Icon.png",
+      "icon": "./assets/images/Icon-square.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/Icon.png",
+        "foregroundImage": "./assets/images/Icon-square.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
@@ -30,7 +30,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/icons/Icon.png",
+          "image": "./assets/images/Icon-square.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

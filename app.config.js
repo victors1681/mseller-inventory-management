@@ -4,7 +4,7 @@ export default {
   expo: {
     name: "MSeller Lite",
     slug: "mseller-lite",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/icons/Icon.png",
     scheme: "msellerlite",

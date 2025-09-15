@@ -1,7 +1,7 @@
 {
   "name": "mseller-lite",
   "main": "expo-router/entry",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "start:local": "EXPO_PUBLIC_LOCAL_MODE=true EXPO_PUBLIC_USE_LOCAL_API=true expo start",
@@ -15,7 +15,7 @@
     "lint": "expo lint",
     "setup-template": "./setup-template.sh",
     "validate-template": "npm run lint && npx tsc --noEmit",
-    "build:android:prod": "eas build -p android --profile production"
+    "build:android:prod": "eas build -p android --profile production --clear-cache"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.12.0",

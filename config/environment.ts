@@ -41,9 +41,5 @@ export const logEnvironmentConfig = () => {
     nodeEnv: process.env.NODE_ENV,
     localMode: process.env.EXPO_PUBLIC_LOCAL_MODE,
     useLocalAPI: process.env.EXPO_PUBLIC_USE_LOCAL_API,
-    datadogEnabled: !!(
-      process.env.EXPO_PUBLIC_DATADOG_CLIENT_TOKEN &&
-      process.env.EXPO_PUBLIC_DATADOG_APPLICATION_ID
-    ),
   });
 };

@@ -5,6 +5,7 @@ import axios, {
 } from "axios";
 import {
   getEnvironmentConfig,
+  getEnvironmentConfigWithUser,
   logEnvironmentConfig,
 } from "../config/environment";
 import { auth } from "../config/firebase";
@@ -79,12 +80,24 @@ restClient.interceptors.response.use(
 
 // Set client URL based on user configuration
 export const axiosSetClientUrl = (config?: IConfig, userTestMode?: boolean) => {
-  // Skip URL configuration if we're in local development mode
+  // Get the appropriate environment configuration
+  const envConfig = getEnvironmentConfigWithUser(config);
+
+  // Update baseURL if we have a new one
+  if (envConfig.apiBaseURL) {
+    restClient.defaults.baseURL = envConfig.apiBaseURL;
+    console.log(`🔧 Updated axios baseURL to: ${envConfig.apiBaseURL}`);
+  }
+
+  // Skip header-based routing if we're in local development mode
   if (envConfig.isLocalDevelopment) {
-    console.log("🔧 Skipping URL configuration - using local development mode");
+    console.log(
+      "🔧 Using local development mode - skipping header configuration"
+    );
     return;
   }
 
+  // Set routing headers for production mode (legacy support)
   if (config?.serverUrl) {
     if (config.testMode || userTestMode) {
       restClient.defaults.headers.common[
@@ -107,6 +120,16 @@ export const refreshAccessToken = async (): Promise<string | undefined> => {
     console.error("Error refreshing access token:", error);
     return undefined;
   }
+};
+
+// Utility function to update axios configuration with user config
+export const updateAxiosConfig = (
+  userConfig?: IConfig,
+  userTestMode?: boolean
+) => {
+  axiosSetClientUrl(userConfig, userTestMode);
+  // Log the updated configuration
+  logEnvironmentConfig(userConfig);
 };
 
 export default restClient;

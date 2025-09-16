@@ -1,5 +1,6 @@
 import { User } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { updateAxiosConfig } from "../services/api";
 import { initializeUserSession } from "../services/userService";
 import { UserTypes } from "../types/user";
 import { useAuth } from "./AuthContext";
@@ -52,6 +53,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
         const profile = await initializeUserSession();
         setUserProfile(profile || null);
+
+        // Update axios configuration with user's business config
+        if (profile?.business?.config) {
+          updateAxiosConfig(profile.business.config, profile.testMode);
+        }
       } catch (err) {
         console.error("Error fetching user profile:", err);
         setError(
@@ -77,6 +83,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
       const profile = await initializeUserSession();
       setUserProfile(profile || null);
+
+      // Update axios configuration with user's business config
+      if (profile?.business?.config) {
+        updateAxiosConfig(profile.business.config, profile.testMode);
+      }
     } catch (err) {
       console.error("Error refreshing user profile:", err);
       setError(

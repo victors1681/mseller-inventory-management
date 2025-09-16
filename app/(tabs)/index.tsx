@@ -49,7 +49,7 @@ export default function HomeScreen() {
       title: t("dashboard.searchProducts"),
       icon: "magnify",
       color: theme.colors.primary,
-      onPress: () => router.push("/(tabs)/ProductScreen"),
+      onPress: () => router.push("/(tabs)/products"),
     },
     {
       id: "inventory",

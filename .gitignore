@@ -33,6 +33,11 @@ yarn-error.*
 # local env files
 .env*.local
 
+# environment setup scripts (contain sensitive data)
+scripts/setup-env-vars.sh
+scripts/setup-all-env-vars.sh
+scripts/*env*-local.sh
+
 # typescript
 *.tsbuildinfo
 

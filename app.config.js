@@ -22,6 +22,9 @@ export default {
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
+      crashReporting: {
+        enabled: true,
+      },
     },
     web: {
       bundler: "metro",

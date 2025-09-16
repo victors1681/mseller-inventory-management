@@ -6,6 +6,7 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
@@ -50,6 +51,22 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  // Add global error handling for production
+  useEffect(() => {
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      originalConsoleError(...args);
+      // In production, you might want to send this to a logging service
+      if (__DEV__ === false) {
+        console.log("Production Error Logged:", args);
+      }
+    };
+
+    return () => {
+      console.error = originalConsoleError;
+    };
+  }, []);
 
   if (!loaded) {
     // Async font loading only occurs in development.

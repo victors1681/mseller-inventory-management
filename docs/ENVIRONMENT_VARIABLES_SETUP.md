@@ -11,6 +11,7 @@ Your app crashes in production builds because environment variables are not avai
 1. **Go to Expo Dashboard**: <https://expo.dev/accounts/victors1681/projects/mseller-lite/environment-variables>
 
 2. **Create environments** (if they don't exist):
+
    - `production`
    - `preview`
    - `development`
@@ -38,6 +39,7 @@ Your app crashes in production builds because environment variables are not avai
    ```
 
 4. **Set visibility**:
+
    - Firebase variables: `Plain text` (they're safe to be public)
    - Datadog variables: `Sensitive` (for better security)
 
@@ -105,11 +107,13 @@ After setting up environment variables:
 ## Security Best Practices
 
 ### ✅ Safe to commit:
+
 - Template scripts with placeholders
 - Documentation
 - Configuration files without credentials
 
 ### ❌ Never commit:
+
 - Scripts with actual API keys
 - `.env` files with real credentials
 - Any file containing sensitive tokens

@@ -16,9 +16,9 @@ export default {
     },
     android: {
       package: "app.mseller.msellerlite",
-      icon: "./assets/icons/Icon.png",
+      icon: "./assets/images/Icon-square.png",
       adaptiveIcon: {
-        foregroundImage: "./assets/icons/Icon.png",
+        foregroundImage: "./assets/images/Icon-square.png",
         backgroundColor: "#ffffff",
       },
       edgeToEdgeEnabled: true,
@@ -33,7 +33,7 @@ export default {
       [
         "expo-splash-screen",
         {
-          image: "./assets/icons/Icon.png",
+          image: "./assets/images/Icon-square.png",
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff",

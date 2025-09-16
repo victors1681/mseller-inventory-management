@@ -16,9 +16,11 @@
     "setup-template": "./setup-template.sh",
     "validate-template": "npm run lint && npx tsc --noEmit",
     "build:android:prod": "eas build -p android --profile production --clear-cache",
-    "build:android:dev": "eas build -p android --profile development --clear-cache"
+    "build:android:dev": "eas build -p android --profile development --clear-cache",
+    "expo-doctor": "npx expo-doctor"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-firebase/app": "^22.4.0",
@@ -39,7 +41,7 @@
     "expo-image": "~3.0.8",
     "expo-linking": "~8.0.8",
     "expo-localization": "~17.0.7",
-    "expo-router": "~6.0.4",
+    "expo-router": "~6.0.5",
     "expo-splash-screen": "~31.0.10",
     "expo-status-bar": "~3.0.8",
     "expo-symbols": "~1.0.7",
@@ -68,8 +70,8 @@
     "@types/react": "^19.1.13",
     "@types/react-test-renderer": "^19.1.0",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~9.2.0",
-    "typescript": "~5.8.3"
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
   },
   "private": true
 }
